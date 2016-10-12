@@ -7,6 +7,7 @@ Created on Tue Oct 11 16:11:24 2016
 """
 
 import math
+import numpy as np
 
 def bisection(bound_down, bound_up, function, Tol=1e-3, MaxIter=20):
     error = 1
