@@ -8,14 +8,14 @@ Created on Tue Oct 11 16:11:24 2016
 
 import math
 
-def bisection(bound_down, bound_up, function, Tol=1e-3):
+def bisection(bound_down, bound_up, function, Tol=1e-3, MaxIter=20):
     error = 1
     
     f_x_down = f_x(function, bound_down)    
     
-    i = 0
+    i = 1
     
-    while error >= Tol and i <=20:
+    while error >= Tol and i <= MaxIter:
         
         p_n = (bound_up + bound_down)/2
         f_x_p = f_x(function, p_n)
@@ -41,3 +41,22 @@ def f_x(function, x):
     f_x_pn = eval(function)
     
     return f_x_pn
+    
+def fixedpoint(guess, function, Tol=1e-3, MaxIter=20):
+    error = 1
+    
+    p_n = guess
+    
+    i = 1
+    
+    while error >= Tol and i <= MaxIter:
+        p = f_x(function,p_n)
+        i = i+1
+        error = abs(p-p_n)
+        print("P_"+str(i)+ " = " + str(p_n))
+        print("F(p_"+str(i)+ ") = " + str(p))
+        print("Error at iteration " + str(i) + " = " + str(error))
+        
+        p_n = p
+        
+    return p_n
