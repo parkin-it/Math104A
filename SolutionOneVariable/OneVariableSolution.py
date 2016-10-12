@@ -8,7 +8,7 @@ Created on Tue Oct 11 16:11:24 2016
 
 import math
 
-def bisection(bound_up, bound_down, function, Tol=1e-3):
+def bisection(bound_down, bound_up, function, Tol=1e-3):
     error = 1
     
     f_x_down = f_x(function, bound_down)    
