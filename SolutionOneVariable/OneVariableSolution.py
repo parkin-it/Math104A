@@ -43,21 +43,21 @@ def f_x(function, x):
     
     return f_x_pn
     
-def fixedpoint(guess, function, Tol=1e-3, MaxIter=20):
+def fixedpoint(guess, function, Tol=1e-3, MaxIter=30):
     error = 1
     
     p_n = guess
     
     i = 1
     
-    while error >= Tol and i <= MaxIter:
+    while error >= Tol and i <= MaxIter and abs(p_n) <= 10e4:
         p = f_x(function,p_n)
-        i = i+1
         error = abs(p-p_n)
         print("P_"+str(i)+ " = " + str(p_n))
         print("F(p_"+str(i)+ ") = " + str(p))
         print("Error at iteration " + str(i) + " = " + str(error))
         
         p_n = p
+        i = i+1
         
     return p_n
