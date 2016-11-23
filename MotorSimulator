@@ -1,0 +1,62 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+nls = 7500 #No Load Speed (rpm)
+nlc = 90 #No Load Current (mA)
+ls = 6100 #Speed at 30g-cm Load (rpm)
+st = 150 #Stall Torque (g-cm)
+sc = 2.6 #Stall Current (A)
+
+v = 6 #Initial Voltage
+k_b = v/(nls*2*np.pi/60) #Back-EMF Const (V/(rad/s))
+k_t = (st*9.8*10**(-5))/sc #Torque Const (N-m/A)
+r_a = (v)/(sc) #Motor Resistance (Ohms)
+B = (k_t*nlc/1000)/(nls*2*np.pi/60) #Viscous Friction (N-m/(rad/s))
+J = .000001 #Need to measure good value for this (Torque/acceleration)
+
+T = (r_a*J)/(r_a*B + k_b*k_t)
+K = k_t/(r_a*B+k_b*k_t)
+
+t_max = 5000 #milliseconds
+t = [0]*t_max
+for i in range(0,t_max):
+    t[i] = i/10e-6
+
+omega = [0]*t_max
+E_a = [0]*t_max
+omega_dot = [0]*t_max
+omega_desired = 300 #rpm
+omega_desired = omega_desired*2*np.pi/60
+print(omega_desired)
+
+K_P = 10 #Proportional Gain
+K_I = 10 #Integral Gain
+K_D = 0 #Derivative Gain
+
+P = 0
+I = 0
+D = 0
+error = 0
+
+#Set Initial Conditions
+omega[0] = 0 #rad/s
+E_a[0] = omega_desired/nls*6 #Volts
+omega_dot[0] = K/T*E_a[0]
+
+for i in range(1,t_max):
+    omega[i] = .001*omega_dot[i-1] + omega[i-1]
+    previouserror = error
+    error = (omega_desired-omega[i])/omega_desired
+    P = error*K_P*omega_desired/nls*6
+    I = I + error*.001*K_I*omega_desired/nls*6
+    D = ((error-previouserror)/.001)*K_D*omega_desired/nls*6
+    E_a[i] = P + I +D
+    if E_a[i] > 9:
+        E_a[i] = 9
+    if E_a[i] < 0:
+        E_a[i] = 0
+    
+    omega_dot[i] = K/T*E_a[i]-omega[i]/T
+
+plt.plot(t,omega,'r')
+#plt.plot(t,E_a,'b')
